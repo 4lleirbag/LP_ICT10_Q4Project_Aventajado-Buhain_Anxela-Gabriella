@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 10 Classmates System</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f5fb;
+            color: #2d3748;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #1e293b;
+        }
+        .header p {
+            margin: 8px 0 0;
+            color: #64748b;
+        }
+        .navbar {
+            background: #800000;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: #f4e4c4;
+            color: #3f1f1f;
+            padding: 0.75rem 1.25rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        .field {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .button-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .button {
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .button:hover {
+            transform: translateY(-1px);
+        }
+        .button-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .button-secondary {
+            background: #166534;
+            color: white;
+        }
+        .list-card h2 {
+            margin: 0 0 14px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .classmate-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .classmate-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+        .classmate-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: bold;">10-Ruby</div>
+        <nav>
+            <a href="#">Classmates</a>
+            <a href="index.html">Attendance Tracker</a>
+            <a href="proj.html">Gallery</a>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <div class="card header">
+
+            <h1>Gr. 10 Classmate System</h1>
+            <p>Add and view your classmates</p>
+
+        </div>
+
+        <div class="card">
+
+            <div class="input-grid">
+                <input id="nameInput" class="field" type="text" placeholder="Name" />
+                <input id="sectionInput" class="field" type="text" placeholder="Section" />
+                <input id="subjectInput" class="field" type="text" placeholder="Favorite Subject" />
+            </div>
+
+            <div class="button-row">
+                <button id="addBtn" class="button button-primary" type="button">Add Classmate</button>
+                <button id="showBtn" class="button button-secondary" type="button">Show List</button>
+            </div>
+
+        </div>
+
+        <div class="card list-card">
+            <h2>Classmate List</h2>
+            <ul id="classmateList" class="classmate-list"></ul>
+        </div>
+
+    </div>
+
+
+    <script>
+        const apiBase = '/api/classmates';
+        const nameInput = document.getElementById('nameInput');
+        const sectionInput = document.getElementById('sectionInput');
+        const subjectInput = document.getElementById('subjectInput');
+        const addBtn = document.getElementById('addBtn');
+        const showBtn = document.getElementById('showBtn');
+        const classmateList = document.getElementById('classmateList');
+
+
+        function renderList(classmates) {
+            classmateList.innerHTML = '';
+            if (!classmates.length) {
+                classmateList.innerHTML = '<li class="classmate-item">No classmates yet.</li>';
+                return;
+            }
+
+            classmates.forEach(({ name, section, subject }) => {
+                const item = document.createElement('li');
+                item.className = 'classmate-item';
+                item.textContent = `Hey! I'm ${name} from ${section}. My favorite subject is ${subject}.`;
+                classmateList.appendChild(item);
+            });
+        }
+
+
+        async function loadClassmates() {
+            try {
+                const response = await fetch(apiBase);
+                if (!response.ok) throw new Error('Failed to load classmates.');
+                const classmates = await response.json();
+                renderList(classmates);
+            } catch (error) {
+                alert(error.message || 'Could not fetch classmates.');
+            }
+        }
+
+
+        addBtn.addEventListener('click', async () => {
+            const name = nameInput.value.trim();
+            const section = sectionInput.value.trim();
+            const subject = subjectInput.value.trim();
+
+            if (!name || !section || !subject) {
+                alert('Please enter the name, section, and favorite subject.');
+                return;
+            }
+
+            try {
+                const response = await fetch(apiBase, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, section, subject })
+                });
+
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || 'Unable to add classmate.');
+                }
+
+                nameInput.value = '';
+                sectionInput.value = '';
+                subjectInput.value = '';
+                await loadClassmates();
+            } catch (error) {
+                alert(error.message || 'Failed to add classmate.');
+            }
+        });
+
+        showBtn.addEventListener('click', loadClassmates);
+        loadClassmates();
+    </script>
+
+
+</body>
+</html>
