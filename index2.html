@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <title>Attendance Tracker</title>
+    <style>
+        /* Base styles */
+        body {
+            background-color: #1C448E;
+            font-family: 'Google Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Remove flex from body so header stays at the top */
+        }
+
+        /* NEW HEADER STYLES */
+        header {
+            background-color: #1a73e8; /* The specific blue from your gallery */
+            color: white;
+            padding: 10px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed; /* Keep it at the top */
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+        /* WRAPPER FOR CENTERING CONTENT */
+        .main-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 50px;
+            padding-top: 60px; /* Space for the fixed header */
+        }
+
+        .container {
+            background-color: #FFE381;
+            padding: 30px;
+            border-radius: 20px;
+            width: 300px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #6F8695;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333; /* Changed to dark for readability on yellow */
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #499ff5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #39b6ff;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #28a745;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        #plot-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="font-weight: bold;">10-Amethyst</div>
+        <nav>
+            <a href="#">Classmates</a>
+            <a href="index.html">Attendance Tracker</a>
+            <a href="proj.html">Gallery</a>
+        </nav>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <h2>Attendance Tracker</h2>
+            
+            <label>Select Day</label>
+            <select id="day">
+                <option value="monday">Monday</option>
+                <option value="tuesday">Tuesday</option>
+                <option value="wednesday">Wednesday</option>
+                <option value="thursday">Thursday</option>
+                <option value="friday" selected>Friday</option>
+            </select>
+
+            <label>Absences</label>
+            <input type="number" id="num" value="0">
+
+            <button onclick="plot()">Submit</button>
+            <div class="progress-bar"></div>
+        </div>
+
+        <div id="plot-container">
+            <div id="mypyplot"></div>
+        </div>
+    </div>
+
+    <py-config>
+        packages = ['numpy', 'matplotlib']
+    </py-config>
+    <py-script src="main.py"></py-script>
+
+</body>
+</html>
